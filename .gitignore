@@ -11,6 +11,11 @@ Thumbs.db
 *.swp
 *.swo
 
+# Movies or gifs
+*.avi
+*.mp4
+*.gif
+
 # -------------------------
 # Large binary data formats
 # -------------------------
