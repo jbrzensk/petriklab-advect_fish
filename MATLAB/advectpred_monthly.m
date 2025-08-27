@@ -17,7 +17,7 @@ load([vpath 'Data_hindcast_grid_cp2D.mat' ])
 load([ vpath 'all_neighbors_2_360x200.mat' ])
 
 % Alt_Velocities
-% load([ vpath 'Vel100_esm2m_core_daily_1988.mat' ]);
+load([ vpath 'Vel100_esm2m_core_daily_1988.mat' ]);
 
 lon = geolon_t;
 lat = geolat_t;
@@ -57,9 +57,9 @@ OG_sum = sum(sum( bio(ID) .* GRD.area(ID) ) );
 %% define prey
 %prey = zeros(ni,nj);
 %prey = 10*rand(ni,nj);
-prey = 0 + ( 10 - 0 ) * cosd(abs(lat) / 2);
+%prey = 0 + ( 10 - 0 ) * cosd(abs(lat) / 2);
 
-%prey = 100*ones(ni,nj);   %Global
+prey = 100*ones(ni,nj);   %Global
 %prey(220:240,:) = 10.0; prey(121:141,195:200) = 10.0; %Atl-Arctic
 %prey(:,84:109) = 1.0e1;     %seed equator
 %prey(220:240,:) = 1.0e1;    %seed Atl
@@ -72,6 +72,7 @@ prey = 0 + ( 10 - 0 ) * cosd(abs(lat) / 2);
 
 prey = prey .* GRD.mask;
 
+surf(prey)
 %% define time
 YEARS = 1;
 DAYS = 365;
@@ -106,10 +107,11 @@ for Y=1:YEARS
         alt_current(:,:,2) = temp;
         %current(:,:,1) = u200(:,:,M); 
         %current(:,:,2) = v200(:,:,M);
+        bio2=bio;
         for DAY = 1:Mos(mo) 
             step_bio = bio(ID);
             n=n+1;
-            [num2str(mo) ',' num2str(DAY)];
+            [num2str(mo) ',' num2str(DAY)]; 
             bio = AdvectPredator( bio,...
                               prey, ...
                               alt_current, ...
@@ -121,14 +123,14 @@ for Y=1:YEARS
                               GRD.mask, ...
                               GRD.area, ...
                               nj, ...% m from above
-                              ni);   % n from above
+                              ni);   % n from above 
 
             biov(:,n) = bio(ID); 
             STEP_sum = sum(sum( step_bio .* GRD.area(ID) ) );
             FINAL_sum = sum(sum( bio(ID) .* GRD.area(ID) ) ); 
-            %fprintf('day: %2d, mnth: %2d, step_diff: %5.6e, overall_diff: %5.6e \n',DAY, mo, OG_sum-STEP_sum, OG_sum-FINAL_sum);
-            %fprintf('230,98 = %4.5e\n', bio(232,95));
-            %fprintf('Max velocity: %4.5e\n', max(max(max(alt_current))));
+            fprintf('day: %2d, mnth: %2d, step_diff: %5.6e, overall_diff: %5.6e \n',DAY, mo, OG_sum-STEP_sum, OG_sum-FINAL_sum);
+            fprintf('230,98 = %4.5e\n', bio(232,95));
+            fprintf('Max velocity: %4.5e\n', max(max(max(alt_current))));
                 %% Plot Fish Concentration
             %set(gcf, 'Units', 'normalized', 'OuterPosition', [0 0 1 1]);
             ax1 = gca;
@@ -146,8 +148,9 @@ for Y=1:YEARS
             title(['Fish Con on Day: ', num2str(n)]);
             clim([0 10]);
             drawnow
-            frame = getframe(fig);
-            writeVideo(v, frame);
+            % frame = getframe(fig);
+            % writeVideo(v, frame);
+            bio2=bio;
         end
     end
 end

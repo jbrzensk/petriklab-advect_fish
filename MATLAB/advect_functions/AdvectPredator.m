@@ -106,5 +106,6 @@ function[ Predator ] = AdvectPredator( Predator,...
     end
     
     Predator = Predator + (Flux ./ area );
+    %Predator = Predator + (Flux ./ area );
     %
 end
