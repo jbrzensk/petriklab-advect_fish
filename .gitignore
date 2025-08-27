@@ -1,0 +1,71 @@
+# -------------------------
+# General
+# -------------------------
+# OS files
+.DS_Store
+Thumbs.db
+
+# Editor / IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# -------------------------
+# Large binary data formats
+# -------------------------
+# MATLAB data files
+*.mat
+
+# NetCDF files
+*.nc
+*.nc4
+*.cdf
+
+# HDF5 files
+*.h5
+*.hdf5
+*.he5
+
+# GRIB / meteorological formats
+*.grb
+*.grib
+*.grb2
+
+# Binary dumps / checkpoints
+*.bin
+*.chk
+*.sav
+*.npy
+*.npz
+*.pkl
+
+# -------------------------
+# Logs and temporary files
+# -------------------------
+*.log
+*.out
+*.err
+*.tmp
+*.bak
+
+# -------------------------
+# Jupyter / Python
+# -------------------------
+.ipynb_checkpoints/
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# -------------------------
+# Build / output directories
+# -------------------------
+build/
+dist/
+*.egg-info/
+outputs/
+results/
+scratch/
+
+
