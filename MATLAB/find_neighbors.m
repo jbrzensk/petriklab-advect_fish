@@ -4,8 +4,10 @@
 
 close all; clear all; clc;
 
-datafile='data/feb152013_run25_ocean.198801-200712_uh200_vh200.mat';
-gridfile='data/Data_hindcast_grid_cp2D.mat';
+datafile='../data/feb152013_run25_ocean.198801-200712_uh200_vh200.mat';
+gridfile='../data/Data_hindcast_grid_cp2D.mat';
+
+addpath(genpath('neighbors_functions'))
 
 load(datafile);
 load(gridfile);
