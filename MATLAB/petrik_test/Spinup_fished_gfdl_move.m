@@ -16,6 +16,7 @@ param = make_parameters(param);
 
 %! Grids
 vpath = '/Volumes/petrik-lab/Feisty/GCM_Data/CORE-forced/';
+vpath = '../../data/';
 %vpath = '/project/Feisty/GCM_Data/CORE-forced/';
 
 %1-D
@@ -29,7 +30,7 @@ GRD2 = GRD;
 clear GRD
 
 %Grid cell neighbors
-load([vpath 'all_neighbors_core_grid_360x200.mat'],'neighborhood')
+load([vpath 'all_neighbors_2_360x200.mat'],'neighborhood')
 
 %grid params
 [ni,nj] = size(GRD2.mask);
@@ -54,7 +55,8 @@ DAYS = 365;
 MNTH = [31,28,31,30,31,30,31,31,30,31,30,31];
 
 %! Create a directory for output
-opath = '/Volumes/petrik-lab/Feisty/NC/Matlab_new_size/';
+%opath = '/Volumes/petrik-lab/Feisty/NC/Matlab_new_size/';
+opath = '../../data/output/';
 %opath = '/project/Feisty/NC/Matlab_new_size/';
 exper = 'Spinup1988_move_prey_v13_zerovel';
 [fname,simname,sname] = sub_fname_spin_move_core(param,opath,exper);
@@ -72,7 +74,7 @@ S_Lrg_p = zeros(NX,DAYS);
 S_Lrg_d = zeros(NX,DAYS);
 
 %! Initialize
-%[Sml_f,Sml_p,Sml_d,Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT] = sub_init_fish(ID,DAYS);
+%  [Sml_f,Sml_p,Sml_d,Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT] = sub_init_fish(ID,DAYS);
 
 % Last month of spinup without movement
 load([sname '_' simname '.mat']); 
@@ -163,7 +165,8 @@ netcdf.endDef(ncidB);
 
 %% %%%%%%%%%%%%%%%%%%%% Run the Model
 
-addpath('matlab_functions');
+%addpath('matlab_functions');
+addpath('../advect_functions');
 
 load([vpath,'Data_ocean_cobalt_daily_1988.mat'],'COBALT');
 %load([vpath,'Vel100_esm2m_core_daily_1988.mat'],'ESM');
@@ -178,7 +181,7 @@ for YR = 1:YEARS % years
     for DAY = 1:param.DT:DAYS % days
 
         %%%! Future time step
-        DY = int64(ceil(DAY));
+        DY = int64(ceil(DAY))
         [Sml_f,Sml_p,Sml_d,Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT,ENVR] = ...
             sub_futbio_move_prey(DY,COBALT,GRD1,Sml_f,Sml_p,Sml_d,...
             Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT,param,neighborhood);

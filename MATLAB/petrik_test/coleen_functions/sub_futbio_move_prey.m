@@ -100,6 +100,35 @@ Ld.con_p  = sub_cons(param,ENVR.Tp,ENVR.Tb,Ld.td,param.M_l,[Ld.enc_p,Ld.enc_f,Ld
 Ld.con_d  = sub_cons(param,ENVR.Tp,ENVR.Tb,Ld.td,param.M_l,[Ld.enc_d,Ld.enc_p,Ld.enc_f,Ld.enc_be]);
 Ld.con_be = sub_cons(param,ENVR.Tp,ENVR.Tb,Ld.td,param.M_l,[Ld.enc_be,Ld.enc_f,Ld.enc_p,Ld.enc_d]);
 
+% Some other plots
+figure(18)
+SFbio = sub_1Dto2D(GRD,Sf.bio,param);
+SPbio = sub_1Dto2D(GRD,Sp.bio,param);
+SDbio = sub_1Dto2D(GRD,Sd.bio,param);
+MFbio = sub_1Dto2D(GRD,Mf.bio,param);
+ax18=tiledlayout(2,2);
+title(ax18,'Pre bio')
+nexttile;pcolor(SFbio'); shading interp;title('Sf.bio');
+nexttile; pcolor(SPbio'); shading interp;title('Sp.bio');
+nexttile; pcolor(SDbio'); shading interp;title('Sd.bio');
+nexttile; pcolor(MFbio'); shading interp;title('Mf.bio');
+drawnow;
+
+figure(19)
+SF_conzm = sub_1Dto2D(GRD,Sf.con_zm,param);
+SP_conzm = sub_1Dto2D(GRD,Sp.con_zm,param);
+SD_conzm = sub_1Dto2D(GRD,Sd.con_zm,param);
+MF_conzm = sub_1Dto2D(GRD,Mf.con_zm,param);
+ax19=tiledlayout(2,2);
+title(ax19,'Pre suboffline')
+nexttile;pcolor(SF_conzm'); shading interp;title('Sf.con zm');
+nexttile; pcolor(SP_conzm'); shading interp;title('Sp.con zm');
+nexttile; pcolor(SD_conzm'); shading interp;title('Sd.con zm');
+nexttile; pcolor(MF_conzm'); shading interp;title('Mf.con zm');
+drawnow;
+
+
+
 % Offline coupling
 %MZ consumption cannot exceed amount lost to higher predation in COBALT runs
 [Sf.con_zm,Sp.con_zm,Sd.con_zm,Mf.con_zm,Mp.con_zm,ENVR.fZm] = ...
@@ -119,6 +148,40 @@ Mp.I = Mp.con_zm + Mp.con_zl + Mp.con_f + Mp.con_p + Mp.con_d;
 Md.I = Md.con_be;
 Lp.I = Lp.con_f + Lp.con_p + Lp.con_d;
 Ld.I = Ld.con_f + Ld.con_p + Ld.con_d + Ld.con_be;
+
+% Some other plots
+figure(10)
+preySf = sub_1Dto2D(GRD,Sf.I,param);
+preySp = sub_1Dto2D(GRD,Sp.I,param);
+preySd = sub_1Dto2D(GRD,Sd.I,param);
+preyMf = sub_1Dto2D(GRD,Mf.I,param);
+preyMp = sub_1Dto2D(GRD,Mp.I,param);
+preyMd = sub_1Dto2D(GRD,Md.I,param);
+preyLp = sub_1Dto2D(GRD,Lp.I,param);
+preyLd = sub_1Dto2D(GRD,Ld.I,param);
+ax10=tiledlayout(3,3)
+title(ax10,'Prey Before Loop')
+nexttile; pcolor(preySf'); shading interp; title('preySf');
+nexttile; pcolor(preySp'); shading interp; title('preySp');
+nexttile; pcolor(preySd'); shading interp; title('preySd');
+nexttile; pcolor(preyMf'); shading interp; title('preyMf');
+nexttile; pcolor(preyMp'); shading interp; title('preyMp');
+nexttile; pcolor(preyMd'); shading interp; title('preyMd');
+nexttile; pcolor(preyLp'); shading interp; title('preyLp');
+nexttile; pcolor(preyLd'); shading interp; title('preyLd');
+
+figure(20)
+SF_conzm = sub_1Dto2D(GRD,Sf.con_zm,param);
+SP_conzm = sub_1Dto2D(GRD,Sp.con_zm,param);
+SD_conzm = sub_1Dto2D(GRD,Sd.con_zm,param);
+MF_conzm = sub_1Dto2D(GRD,Mf.con_zm,param);
+ax20=tiledlayout(2,2);
+title(ax20,'Post Suboffline')
+nexttile;pcolor(SF_conzm'); shading interp;title('Sf.con zm');
+nexttile; pcolor(SP_conzm'); shading interp;title('Sp.con zm');
+nexttile; pcolor(SD_conzm'); shading interp;title('Sd.con zm');
+nexttile; pcolor(MF_conzm'); shading interp;title('Mf.con zm');
+drawnow;
 
 % Consumption related to Cmax
 Sf.clev = sub_clev(param,Sf.I,ENVR.Tp,ENVR.Tb,Sf.td,param.M_s);
@@ -265,6 +328,9 @@ btm_curr = 0.1 .* current;
 daysec = 24 * 60 * 60;
 nloop = (daysec / param.adt);
 
+old_bioSf = bioSf;
+old_bioSp = bioSp;
+old_bioSd = bioSd;
 for n = 1:nloop
     % move
     bioSf = AdvectPredator(bioSf,preySf,current,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
@@ -276,6 +342,22 @@ for n = 1:nloop
     bioLp = AdvectPredator(bioLp,preyLp,current,param.adt,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
     bioLd = AdvectPredator(bioLd,preyLd,btm_curr,param.adt,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
 end
+
+diff = sum( abs(bioSf(:) - old_bioSf(:)), 'omitnan');
+assert( diff == 0, 'Sf Diff too large');
+diff = sum( abs(bioSp(:) - old_bioSp(:)), 'omitnan');
+assert( diff == 0, 'Sp Diff too large');
+diff = sum( abs(bioSd(:) - old_bioSd(:)), 'omitnan');
+assert( diff == 0, 'Sd Diff too large');
+
+figure(25)
+ax25=tiledlayout(2,2);
+title(ax25,'Post Advect')
+nexttile;pcolor(bioSd'); shading interp;title('Sdbio');
+nexttile; pcolor(preySd'); shading interp;title('Sdprey');
+nexttile; pcolor(bioSp'); shading interp;title('Spbio');
+nexttile; pcolor(preySp'); shading interp;title('Spprey');
+drawnow;
 
 % put back on 1D grid
 Sf.bio = bioSf(GRD.ID);
