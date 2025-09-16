@@ -77,7 +77,7 @@ function [Flux] = semiLagrangianFish(conc_matrix, Flux, idx, dir, current, dt, d
     speeds = dir .* current;
     %
     %proportion_out = abs(speeds) .* dt ./ distance;
-    proportion_out = abs(speeds)' .* dt .* flipud(distance) ./ area(i,j);
+    proportion_out = abs(speeds)' .* dt .* distance ./ area(i,j);
     %
     conc_moving_out = proportion_out .* cell_concentration;
     %

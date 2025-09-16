@@ -1,0 +1,20 @@
+function [] = plotNineFish( fignum, title_str, Sfi, Spi, Sdi, Mfi, Mpi, Mdi, Lpi, Ldi, GRD, param)
+figure(fignum);
+preySf = sub_1Dto2D(GRD,Sfi,param);
+preySp = sub_1Dto2D(GRD,Spi,param);
+preySd = sub_1Dto2D(GRD,Sdi,param);
+preyMf = sub_1Dto2D(GRD,Mfi,param);
+preyMp = sub_1Dto2D(GRD,Mpi,param);colorbar;
+preyMd = sub_1Dto2D(GRD,Mdi,param);
+preyLp = sub_1Dto2D(GRD,Lpi,param);
+preyLd = sub_1Dto2D(GRD,Ldi,param);
+fignum=tiledlayout(3,3);
+title(fignum,title_str);
+nexttile; pcolor(preySf'); shading interp; title('Sf');colorbar;
+nexttile; pcolor(preySp'); shading interp; title('Sp');colorbar;
+nexttile; pcolor(preySd'); shading interp; title('Sd');colorbar;
+nexttile; pcolor(preyMf'); shading interp; title('Mf');colorbar;
+nexttile; pcolor(preyMp'); shading interp; title('Mp');colorbar;
+nexttile; pcolor(preyMd'); shading interp; title('Md');colorbar;
+nexttile; pcolor(preyLp'); shading interp; title('Lp');colorbar;clim([0 50]);
+nexttile; pcolor(preyLd'); shading interp; title('Ld');colorbar;clim([0 50]);

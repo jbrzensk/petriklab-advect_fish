@@ -332,7 +332,7 @@ bioMf = smooth2nan(bioMf);
 bioLp = smooth2nan(bioLp);
 bioLd = smooth2nan(bioLd);
 
-title_string = ['Fish after advect day : ', num2str(DY) ];
+title_string -
 plotNineFish( 32, title_string, Sf.bio, Sp.bio, Sd.bio, Mf.bio,...
                                   Mp.bio, Md.bio, Lp.bio, Ld.bio,...
                                   GRD, param);
