@@ -91,10 +91,10 @@ COBALT.V = zeros(NX,DAYS); %ESM.V;
 
 MNT = 0;
 %! Run model with no fishing
-for YR = 1:YEARS % years
+for YR = 1:1%YEARS % years
     ti = num2str(YR)
 
-    for DAY = 1:param.DT:DAYS % days
+    for DAY = 1:param.DT:5%DAYS % days
 
         %%%! Future time step
         DY = int64(ceil(DAY))
