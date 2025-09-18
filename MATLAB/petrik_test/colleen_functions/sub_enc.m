@@ -13,7 +13,7 @@ function enc = sub_enc(param,Tp,Tb,wgt,prey,tpel,tprey,pref)
     temp = (Tp.*tpel) + (Tb.*(1.0-tpel));
     
     %Enc rate
-    A = (exp(param.ke * (temp-10.0)) .* param.gam .* wgt^(-param.benc)) ./365.0;
+    A = (exp(param.ke * (temp-10.0)) .* param.gam .* wgt^(-param.benc)) .*param.DTyear;
     
     %Encounter per predator, mult by biomass later
     frac = zeros(param.NX,1);

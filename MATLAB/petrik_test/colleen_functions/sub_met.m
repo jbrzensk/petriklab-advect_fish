@@ -12,6 +12,6 @@ function met = sub_met(Tp,Tb,tdif,wgt,param)
 
     %Own Fn ------------
     %Metabolism with its own coeff, temp-sens, mass-sens
-    met = (exp(param.kt * (temp-10.0)) .* param.amet .* wgt.^(-param.bpow)) ./365.0;
+    met = (exp(param.kt * (temp-10.0)) .* param.amet .* wgt.^(-param.bpow)) .*param.DTyear;
 
 end
