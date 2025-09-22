@@ -1,5 +1,5 @@
 %%%%!! RUN SPINUP FOR ALL LOCATIONS
-function Spinup_fished_gfdl_nomove_newdt()
+function Historic_fished_gfdl_core()
 
 % Add your specific subfunctions to the path
 addpath(genpath('colleen_functions'));
@@ -19,29 +19,46 @@ param.dfrateD = nan;
 param = make_param_newdt(param);
 
 %! Grids
-vpath = '/Volumes/petrik-lab/Feisty/GCM_Data/CORE-forced/';
-%vpath = '/project/Feisty/GCM_Data/CORE-forced/';
+%vpath = '/Volumes/petrik-lab/Feisty/GCM_Data/CORE-forced/';
+vpath = '/project/Feisty/GCM_Data/CORE-forced/';
 
 %1-D
 load([vpath 'Data_grid_ocean_cobalt_ESM2Mcore.mat'],'GRD');
 GRD1 = GRD;
 clear GRD
 
+% %2-D
+% load([vpath 'Data_hindcast_grid_cp2D.mat'],'GRD')
+% GRD2 = GRD;
+% clear GRD
+% 
+% %grid params
+% [ni,nj] = size(GRD2.mask);
+% param.ni = ni;
+% param.nj = nj;
+% param.dx = GRD2.dxtn;
+% param.dy = GRD2.dyte;
+% param.mask = GRD2.mask;
+
 param.NX = length(GRD1.Z);
 param.ID = 1:param.NX;
 NX = length(GRD1.Z);
 ID = 1:param.NX;
 
+%! Advection/Movement time step
+% param.adt = 24 * 60 * 60; %time step in seconds
+
 %! How long to run the model
-YEARS = 200;
+YEARS = 1988:2007;
+nYEARS = length(YEARS);
 DAYS = 365;
 MNTH = [31,28,31,30,31,30,31,31,30,31,30,31];
 
 %! Create a directory for output
-opath = '/Volumes/petrik-lab/Feisty/NC/Matlab_new_size/';
-%opath = '/project/Feisty/NC/Matlab_new_size/';
-exper = 'Spinup1988_nomove_dt6h_newdt';
-[fname,simname,sname] = sub_fname_spin_core(param,opath,exper);
+exper = '1988_no_move';
+%opath = '/Volumes/petrik-lab/Feisty/NC/Matlab_new_size/';
+opath = '/project/Feisty/NC/Matlab_new_size/';
+[fname,simname,sname] = sub_fname_hist_gfdl_core(param,opath,exper);
 
 %! Storage variables
 Year_Bent_bio = zeros(NX,DAYS);
@@ -56,15 +73,12 @@ Year_Lrg_p = zeros(NX,DAYS);
 Year_Lrg_d = zeros(NX,DAYS);
 
 %! Initialize
-[Sml_f,Sml_p,Sml_d,Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT] = sub_init_fish(ID,DAYS);
-
-% % Last month of spinup without movement
-% load([sname '_' simname '.mat']); 
-% BENT.mass = BENT.bio;
-% [Sml_f,Sml_p,Sml_d,Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT] = sub_init_fish_hist(ID,DAYS,Sml_f,Sml_p,Sml_d,Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT);
+load([sname '_' simname '.mat']); %Last month of spinup
+BENT.mass = BENT.bio;
+[Sml_f,Sml_p,Sml_d,Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT] = sub_init_fish_hist(ID,DAYS,Sml_f,Sml_p,Sml_d,Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT);
 
 %! Dims of netcdf file
-nt = 12 * YEARS;
+nt = 12 * nYEARS;
 netcdf.setDefaultFormat('NC_FORMAT_64BIT');
 
 %% %%%%%%%%%%%%% Setup NetCDF save
@@ -147,22 +161,20 @@ netcdf.endDef(ncidB);
 
 %% %%%%%%%%%%%%%%%%%%%% Run the Model
 
-addpath('matlab_functions');
-
-load([vpath,'Data_ocean_cobalt_daily_1988.mat'],'COBALT');
-
 MNT = 0;
 %! Run model with no fishing
-for YR = 1:YEARS % years
-    ti = num2str(YR)
+for YR = 1:nYEARS % years
+    ti = num2str(YEARS(YR))
+    load([vpath,'Data_ocean_cobalt_daily_',ti,'.mat'],'COBALT');
+    
 
     for DAY = param.DTday:param.DTday:DAYS % days
 
         %%%! Future time step
         DY = int64(ceil(DAY));
         [Sml_f,Sml_p,Sml_d,Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT,ENVR] = ...
-            sub_futbio_move_prey(DY,COBALT,GRD1,Sml_f,Sml_p,Sml_d,...
-            Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT,param,neighborhood);
+            sub_futbio(DY,COBALT,GRD1,Sml_f,Sml_p,Sml_d,...
+            Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT,param);
 
         %! Store
         Year_Bent_bio(:,DY) = BENT.mass;
@@ -202,9 +214,6 @@ for YR = 1:YEARS % years
     end %Monthly mean
 
 end %Years
-
-% save([fname,'_Y1.mat'],'Year_Bent_bio','Year_Sml_f','Year_Sml_p','Year_Sml_d','Year_Med_f',...
-%     'Year_Med_p','Year_Med_d','Year_Lrg_p','Year_Lrg_d','GRD1','GRD2','exper');
 
 %! Close save
 netcdf.close(ncidSF);
