@@ -1,6 +1,6 @@
 %%%% THE MODEL
 %%% DEMOGRAPHIC CALCULATIONS
-function [Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,ENVR] = sub_futbio_move_nu(DY,ESM,GRD,Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,param,neighbor)
+function [Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,ENVR] = sub_futbio_move_ingest(DY,ESM,GRD,Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,param,neighbor)
 
 dfrate = param.dfrate;
 
@@ -226,18 +226,18 @@ Ld.bio=sub_check_nan(Ld.bio);
 
 
 %%% MOVEMENT CALCULATIONS - advection and directed swimming
-%put on 2D grid
-%nu
+%need to 1) calc prey of each fish; 2) put on 2D grid
+%prey - total consump (I) prob easiest to use here because factors in prefs
 
 % make 2D
-preySf = sub_1Dto2D(GRD,Sf.nu,param);
-preySp = sub_1Dto2D(GRD,Sp.nu,param);
-preySd = sub_1Dto2D(GRD,Sd.nu,param);
-preyMf = sub_1Dto2D(GRD,Mf.nu,param);
-preyMp = sub_1Dto2D(GRD,Mp.nu,param);
-preyMd = sub_1Dto2D(GRD,Md.nu,param);
-preyLp = sub_1Dto2D(GRD,Lp.nu,param);
-preyLd = sub_1Dto2D(GRD,Ld.nu,param);
+preySf = sub_1Dto2D(GRD,Sf.I,param);
+preySp = sub_1Dto2D(GRD,Sp.I,param);
+preySd = sub_1Dto2D(GRD,Sd.I,param);
+preyMf = sub_1Dto2D(GRD,Mf.I,param);
+preyMp = sub_1Dto2D(GRD,Mp.I,param);
+preyMd = sub_1Dto2D(GRD,Md.I,param);
+preyLp = sub_1Dto2D(GRD,Lp.I,param);
+preyLd = sub_1Dto2D(GRD,Ld.I,param);
 
 bioSf = sub_1Dto2D(GRD,Sf.bio,param);
 bioSp = sub_1Dto2D(GRD,Sp.bio,param);

@@ -227,7 +227,7 @@ Ld.bio=sub_check_nan(Ld.bio);
 
 %%% MOVEMENT CALCULATIONS - advection and directed swimming
 %need to 1) calc tot mort of each fish; 2) put on 2D grid
-%prey - total consump (I) prob easiest to use here because factors in prefs
+%use 1/mort because want to minimize mort
 
 Sf.tmort = 1 ./ (Sf.pred + Sf.nmort + 0);
 Sp.tmort = 1 ./ (Sp.pred + Sp.nmort + 0);
@@ -270,21 +270,16 @@ current(:,:,1) = u100;
 current(:,:,2) = v100;
 btm_curr = 0.1 .* current;
 
-% Loop over advection for one day
-daysec = 24 * 60 * 60;
-nloop = (daysec / param.adt);
 
-for n = 1:nloop
-    % move
-    bioSf = AdvectPredator(bioSf,preySf,current,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
-    bioSp = AdvectPredator(bioSp,preySp,current,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
-    bioSd = AdvectPredator(bioSd,preySd,current,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
-    bioMf = AdvectPredator(bioMf,preyMf,current,param.adt,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
-    bioMp = AdvectPredator(bioMp,preyMp,current,param.adt,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
-    bioMd = AdvectPredator(bioMd,preyMd,btm_curr,param.adt,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
-    bioLp = AdvectPredator(bioLp,preyLp,current,param.adt,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
-    bioLd = AdvectPredator(bioLd,preyLd,btm_curr,param.adt,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
-end
+bioSf = AdvectPredator(bioSf,preySf,current,param.DTsec,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
+bioSp = AdvectPredator(bioSp,preySp,current,param.DTsec,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
+bioSd = AdvectPredator(bioSd,preySd,current,param.DTsec,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
+bioMf = AdvectPredator(bioMf,preyMf,current,param.DTsec,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
+bioMp = AdvectPredator(bioMp,preyMp,current,param.DTsec,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
+bioMd = AdvectPredator(bioMd,preyMd,btm_curr,param.DTsec,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
+bioLp = AdvectPredator(bioLp,preyLp,current,param.DTsec,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
+bioLd = AdvectPredator(bioLd,preyLd,btm_curr,param.DTsec,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
+
 
 % put back on 1D grid
 Sf.bio = bioSf(GRD.ID);

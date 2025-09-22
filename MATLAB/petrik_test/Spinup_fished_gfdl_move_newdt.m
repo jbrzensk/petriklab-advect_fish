@@ -49,14 +49,14 @@ NX = length(GRD1.Z);
 ID = 1:param.NX;
 
 %! How long to run the model
-YEARS = 30;
+YEARS = 50;
 DAYS = 365;
 MNTH = [31,28,31,30,31,30,31,31,30,31,30,31];
 
 %! Create a directory for output
 opath = '/Volumes/petrik-lab/Feisty/NC/Matlab_new_size/';
 %opath = '/project/Feisty/NC/Matlab_new_size/';
-exper = 'Spinup1988_move_prey_v21_dt6h';
+exper = 'Spinup1988_move_prey_v21_dt6h_newdt';
 [fname,simname,sname] = sub_fname_spin_move_core(param,opath,exper);
 
 %! Storage variables
@@ -175,7 +175,7 @@ MNT = 0;
 for YR = 1:YEARS % years
     ti = num2str(YR)
 
-    for DAY = 1:param.DTday:DAYS % days
+    for DAY = param.DTday:param.DTday:DAYS % days
 
         %%%! Future time step
         DY = int64(ceil(DAY));
