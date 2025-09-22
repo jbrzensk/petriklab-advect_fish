@@ -19,8 +19,8 @@ param.dfrateD = nan;
 param = make_param_newdt(param);
 
 %! Grids
-vpath = '/Volumes/petrik-lab/Feisty/GCM_Data/CORE-forced/';
-%vpath = '/project/Feisty/GCM_Data/CORE-forced/';
+%vpath = '/Volumes/petrik-lab/Feisty/GCM_Data/CORE-forced/';
+vpath = '/project/Feisty/GCM_Data/CORE-forced/';
 
 %1-D
 load([vpath 'Data_grid_ocean_cobalt_ESM2Mcore.mat'],'GRD');
@@ -161,8 +161,8 @@ for YR = 1:YEARS % years
         %%%! Future time step
         DY = int64(ceil(DAY));
         [Sml_f,Sml_p,Sml_d,Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT,ENVR] = ...
-            sub_futbio_move_prey(DY,COBALT,GRD1,Sml_f,Sml_p,Sml_d,...
-            Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT,param,neighborhood);
+            sub_futbio(DY,COBALT,GRD1,Sml_f,Sml_p,Sml_d,...
+            Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT,param);
 
         %! Store
         Year_Bent_bio(:,DY) = BENT.mass;
