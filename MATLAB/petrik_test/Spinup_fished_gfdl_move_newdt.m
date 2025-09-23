@@ -163,7 +163,7 @@ netcdf.endDef(ncidB);
 
 %% %%%%%%%%%%%%%%%%%%%% Run the Model
 
-addpath('matlab_functions');
+addpath('../advect_functions/');
 
 load([vpath,'Data_ocean_cobalt_daily_1988.mat'],'COBALT');
 load([vpath,'Vel100_esm2m_core_daily_1988.mat'],'ESM');

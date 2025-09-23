@@ -1,5 +1,5 @@
 %%%%!! RUN SPINUP FOR ALL LOCATIONS
-function Spinup_fished_gfdl_move_newdt_nu_Y1()
+function Spinup_fished_gfdl_move_newdt_mort_Y1()
 % Add your specific subfunctions to the path
 addpath(genpath('colleen_functions'));
 
@@ -56,7 +56,7 @@ MNTH = [31,28,31,30,31,30,31,31,30,31,30,31];
 %! Create a directory for output
 opath = '/Volumes/petrik-lab/Feisty/NC/Matlab_new_size/';
 %opath = '/project/Feisty/NC/Matlab_new_size/';
-exper = 'Spinup1988_move_nu_v21_dt6h_newdt';
+exper = 'Spinup1988_move_mort_v21_dt6h_newdt';
 [fname,simname,sname] = sub_fname_spin_move_core(param,opath,exper);
 
 %! Storage variables
@@ -101,7 +101,7 @@ for YR = 1:YEARS % years
         %%%! Future time step
         DY = int64(ceil(DAY));
         [Sml_f,Sml_p,Sml_d,Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT,ENVR] = ...
-            sub_futbio_move_nu(DY,COBALT,GRD1,Sml_f,Sml_p,Sml_d,...
+            sub_futbio_move_mort(DY,COBALT,GRD1,Sml_f,Sml_p,Sml_d,...
             Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT,param,neighborhood);
 
         %! Store
@@ -116,13 +116,13 @@ for YR = 1:YEARS % years
         S_Lrg_p(:,DY) = Lrg_p.bio;
         S_Lrg_d(:,DY) = Lrg_d.bio;
 
-    end %Days
-
+    end %Days  
 
 end %Years
 
 save([fname,'_Y1.mat'],'S_Bent_bio','S_Sml_f','S_Sml_p','S_Sml_d','S_Med_f',...
     'S_Med_p','S_Med_d','S_Lrg_p','S_Lrg_d','GRD1','GRD2','exper');
+
 
 
 end
