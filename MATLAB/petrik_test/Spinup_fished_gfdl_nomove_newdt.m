@@ -19,8 +19,8 @@ param.dfrateD = nan;
 param = make_param_newdt(param);
 
 %! Grids
-vpath = '/Volumes/petrik-lab/Feisty/GCM_Data/CORE-forced/';
-%vpath = '/project/Feisty/GCM_Data/CORE-forced/';
+%vpath = '/Volumes/petrik-lab/Feisty/GCM_Data/CORE-forced/';
+vpath = '/project/Feisty/GCM_Data/CORE-forced/';
 
 %1-D
 load([vpath 'Data_grid_ocean_cobalt_ESM2Mcore.mat'],'GRD');
@@ -38,8 +38,8 @@ DAYS = 365;
 MNTH = [31,28,31,30,31,30,31,31,30,31,30,31];
 
 %! Create a directory for output
-opath = '/Volumes/petrik-lab/Feisty/NC/Matlab_new_size/';
-%opath = '/project/Feisty/NC/Matlab_new_size/';
+%opath = '/Volumes/petrik-lab/Feisty/NC/Matlab_new_size/';
+opath = '/project/Feisty/NC/Matlab_new_size/';
 exper = 'Spinup1988_nomove_dt6h_newdt';
 [fname,simname,sname] = sub_fname_spin_gfdl_core(param,opath,exper);
 
@@ -147,8 +147,6 @@ netcdf.endDef(ncidB);
 
 %% %%%%%%%%%%%%%%%%%%%% Run the Model
 
-addpath('matlab_functions');
-
 load([vpath,'Data_ocean_cobalt_daily_1988.mat'],'COBALT');
 
 MNT = 0;
@@ -203,8 +201,6 @@ for YR = 1:YEARS % years
 
 end %Years
 
-% save([fname,'_Y1.mat'],'Year_Bent_bio','Year_Sml_f','Year_Sml_p','Year_Sml_d','Year_Med_f',...
-%     'Year_Med_p','Year_Med_d','Year_Lrg_p','Year_Lrg_d','GRD1','GRD2','exper');
 
 %! Close save
 netcdf.close(ncidSF);
@@ -216,7 +212,6 @@ netcdf.close(ncidMD);
 netcdf.close(ncidLP);
 netcdf.close(ncidLD);
 netcdf.close(ncidB);
-
 
 
 end
