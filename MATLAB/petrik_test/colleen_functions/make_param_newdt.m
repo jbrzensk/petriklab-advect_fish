@@ -60,6 +60,11 @@ function param = make_param_newdt(param)
     %%%! Reproductive efficiency
     param.rfrac = 0.01;
 
+    %! cruising swimming speed (m/s)
+    param.U_s = 0.0;
+    param.U_m = 0.1; 
+    param.U_l = 1.0; 
+
     %%%! Background mortality
     param.Nat_mrt = 0.1 * param.DTyear;
     %0=none, 1=constant, 6=const wgt, T-dep, 7=const T, wgt-dep

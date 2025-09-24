@@ -1,11 +1,11 @@
 %%%% THE MODEL
 %%% DEMOGRAPHIC CALCULATIONS
-function [Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,ENVR] = sub_futbio_move_enc(DY,ESM,GRD,Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,param)
+function [Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,ENVR] = sub_futbio_move_enc(DY,ESM,GRD,Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,param,neighbor)
 
 dfrate = param.dfrate;
 
 %%% ESM information
-ENVR = get_ESM(ESM,GRD,param,DY);
+ENVR = get_ESM_vel(ESM,GRD,param,DY);
 ENVR.det = sub_neg(ENVR.det);
 ENVR.Zm  = sub_neg(ENVR.Zm);
 ENVR.Zl  = sub_neg(ENVR.Zl);
@@ -264,6 +264,7 @@ v200 = sub_1Dto2D(GRD,ENVR.V,param);
 current = nan*ones(param.ni,param.nj,2);
 current(:,:,1) = u200; 
 current(:,:,2) = v200;
+btm_curr = 0.1 .* current;
 
 % move
 bioSf = AdvectPredator(bioSf,preySf,current,param.DTsec,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);

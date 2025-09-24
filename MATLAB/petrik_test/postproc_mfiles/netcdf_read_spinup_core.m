@@ -1,4 +1,4 @@
-% Spinup for 150 yrs
+% Spinup for 200 yrs
 % Save last month for initializing runs
 
 clear 

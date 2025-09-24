@@ -45,9 +45,6 @@ param.ID = 1:param.NX;
 NX = length(GRD1.Z);
 ID = 1:param.NX;
 
-%! Advection/Movement time step
-% param.adt = 24 * 60 * 60; %time step in seconds
-
 %! How long to run the model
 YEARS = 1988:2007;
 nYEARS = length(YEARS);
@@ -225,7 +222,5 @@ netcdf.close(ncidMD);
 netcdf.close(ncidLP);
 netcdf.close(ncidLD);
 netcdf.close(ncidB);
-
-
 
 end
