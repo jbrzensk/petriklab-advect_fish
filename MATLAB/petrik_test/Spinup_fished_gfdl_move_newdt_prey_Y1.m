@@ -1,5 +1,6 @@
 %%%%!! RUN SPINUP FOR ALL LOCATIONS
 function Spinup_fished_gfdl_move_newdt_prey_Y1()
+
 % Add your specific subfunctions to the path
 addpath(genpath('colleen_functions'));
 
@@ -18,8 +19,8 @@ param.dfrateD = nan;
 param = make_param_newdt(param);
 
 %! Grids
-vpath = '/Volumes/petrik-lab/Feisty/GCM_Data/CORE-forced/';
-%vpath = '/project/Feisty/GCM_Data/CORE-forced/';
+%vpath = '/Volumes/petrik-lab/Feisty/GCM_Data/CORE-forced/';
+vpath = '/project/Feisty/GCM_Data/CORE-forced/';
 
 %1-D
 load([vpath 'Data_grid_ocean_cobalt_ESM2Mcore.mat'],'GRD');
@@ -54,8 +55,8 @@ DAYS = 365;
 MNTH = [31,28,31,30,31,30,31,31,30,31,30,31];
 
 %! Create a directory for output
-opath = '/Volumes/petrik-lab/Feisty/NC/Matlab_new_size/';
-%opath = '/project/Feisty/NC/Matlab_new_size/';
+%opath = '/Volumes/petrik-lab/Feisty/NC/Matlab_new_size/';
+opath = '/project/Feisty/NC/Matlab_new_size/';
 exper = 'Spinup1988_move_prey_v21_dt6h_newdt';
 [fname,simname,sname] = sub_fname_spin_move_core(param,opath,exper);
 

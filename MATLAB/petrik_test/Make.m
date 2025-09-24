@@ -4,6 +4,8 @@ clear
 close all
 
 %%%%!! EXPERIMENTS
+spin50      = false;
+core        = false;
 move_Y1_enc 	= true;
 move_Y1_ingest 	= true;
 move_Y1_mort 	= true;
@@ -14,14 +16,11 @@ move_spin50_ingest 	= false;
 move_spin50_mort 	= false;
 move_spin50_nu 		= false;
 move_spin50_prey 	= false;
-move_core_enc = false;
-move_core_ingest = false;
-move_core_mort = false;
-move_core_nu = false;
-move_core_prey = false;
-spin50 = false;
-core = true;
-
+move_core_enc       = false;
+move_core_ingest    = false;
+move_core_mort      = false;
+move_core_nu        = false;
+move_core_prey      = false;
 
 tic
 	
