@@ -278,7 +278,35 @@ current(:,:,1) = u100;
 current(:,:,2) = v100;
 btm_curr = 0.1 .* current;
 
-% Loop over advection for one day
+% Create new currnet centered on cell faces
+u100t = u100';
+[ny, nx] = size(u100t);
+U_face = zeros(ny, nx+1);
+U_face(:,2:nx) = 0.5 * (u100t(:,1:nx-1) + u100t(:,2:nx));
+U_face(:,1) = u100t(:,1);         % western boundary
+U_face(:,nx+1) = u100t(:,nx);     % eastern boundary
+
+maskt = param.mask';
+U_face(:,2:nx) = U_face(:,2:nx) .* (maskt(:,1:nx-1) & maskt(:,2:nx));
+
+
+v100t = v100';
+V_face = zeros(ny+1, nx);
+V_face(2:ny,:) = 0.5 * (v100t(1:ny-1,:) + v100t(2:ny,:));
+% Boundary faces: replicate
+V_face(1,:) = v100t(1,:);     % southern boundary
+V_face(ny+1,:) = v100t(ny,:); % northern boundary% Loop over advection for one day
+
+V_face(2:ny,:) = V_face(2:ny,:) .* (maskt(1:ny-1,:) & maskt(2:ny,:));
+
+
+
+current_new = nan*ones(param.ni+1, param.nj+1,2);
+current_new(:,1:param.nj,1) = U_face';
+current_new(1:param.ni,:,2) = V_face';
+btm_curr_new = 0.1 .* current_new;
+
+
 daysec = 24 * 60 * 60;
 nloop = (daysec / param.adt);
 
@@ -291,21 +319,38 @@ old_bioMd = bioMd;
 old_bioLp = bioLp;
 old_bioLd = bioLd;
 
-%plotNineFish( 31, 'Pre Advect Bio', Sf.bio, Sp.bio, Sd.bio, Mf.bio,...
-%                                 Mp.bio, Md.bio, Lp.bio, Ld.bio,...
-%                                 GRD, param);
+% Setup groups to parallelize
+speciesBio = {bioSf, bioSp, bioSd, bioMf, bioMp, bioMd, bioLp, bioLd};
+speciesPrey = {preySf, preySp, preySd, preyMf, preyMp, preyMd, preyLp, preyLd};
+speciesU    = {param.U_s, param.U_s, param.U_s, param.U_m, param.U_m, param.U_m, param.U_l, param.U_l};
+speciesCurr = {current_new, current_new, current_new, current_new, current_new, btm_curr_new, current_new, btm_curr_new};
 
- for n = 1:nloop
- % move
-    bioSf = AdvectPredator(bioSf,preySf,current,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
-    bioSp = AdvectPredator(bioSp,preySp,current,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
-    bioSd = AdvectPredator(bioSd,preySd,current,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
-    bioMf = AdvectPredator(bioMf,preyMf,current,param.adt,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
-    bioMp = AdvectPredator(bioMp,preyMp,current,param.adt,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
-    bioMd = AdvectPredator(bioMd,preyMd,btm_curr,param.adt,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
-    bioLp = AdvectPredator(bioLp,preyLp,current,param.adt,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
-    bioLd = AdvectPredator(bioLd,preyLd,btm_curr,param.adt,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
- end
+for n = 1:nloop
+    % Parfor loop to run concurently
+    parfor k = 1:8
+        % All 8 are run at the same time
+        speciesBio{k} = AdvectPredator( ...
+            speciesBio{k}, speciesPrey{k}, speciesCurr{k}, ...
+            param.adt, param.dx, param.dy, neighbor, ...
+            speciesU{k}, param.mask, param.area, param.nj, param.ni);
+        % Smooth 
+        speciesBio{k} = smooth2nan(speciesBio{k},3);
+    end
+end
+ % for n = 1:6%nloop
+ % % move
+ %    bioSf = AdvectPredator(bioSf,preySf,current_new,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
+ %    bioSp = AdvectPredator(bioSp,preySp,current_new,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
+ %    bioSd = AdvectPredator(bioSd,preySd,current_new,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
+ %    bioMf = AdvectPredator(bioMf,preyMf,current_new,param.adt,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
+ %    bioMp = AdvectPredator(bioMp,preyMp,current_new,param.adt,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
+ %    bioMd = AdvectPredator(bioMd,preyMd,btm_curr_new,param.adt,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
+ %    bioLp = AdvectPredator(bioLp,preyLp,current_new,param.adt,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
+ %    bioLd = AdvectPredator(bioLd,preyLd,btm_curr_new,param.adt,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
+ % end
+
+ % Re-expand to do more work
+[bioSf, bioSp, bioSd, bioMf, bioMp, bioMd, bioLp, bioLd] = speciesBio{:};
 
 diftol = 0.01;
 
@@ -326,16 +371,16 @@ assert( diff < diftol, 'Lp Diff too large, diff=%4.5f', diff);
 diff = sum( bioLd(:) - old_bioLd(:), 'omitnan');
 assert( diff < diftol, 'Ld Diff too large, diff=%4.5f', diff);
 
-bioMp = smooth2nan(bioMp);
-bioMd = smooth2nan(bioMd);
-bioMf = smooth2nan(bioMf);
-bioLp = smooth2nan(bioLp);
-bioLd = smooth2nan(bioLd);
+% bioMp = smooth2nan(bioMp,2);
+% bioMd = smooth2nan(bioMd,2);
+% bioMf = smooth2nan(bioMf,2);
+% bioLp = smooth2nan(bioLp,2);
+% bioLd = smooth2nan(bioLd,2);
 
-title_string = ['Fish after advect day : ', num2str(DY) ];
-plotNineFish( 32, title_string, Sf.bio, Sp.bio, Sd.bio, Mf.bio,...
-                                  Mp.bio, Md.bio, Lp.bio, Ld.bio,...
-                                  GRD, param);
+% title_string = ['Fish after advect day : ', num2str(DY) ];
+% plotNineFish( 32, title_string, Sf.bio, Sp.bio, Sd.bio, Mf.bio,...
+%                                   Mp.bio, Md.bio, Lp.bio, Ld.bio,...
+%                                   GRD, param);
 
 % figure(25)
 % ax25=tiledlayout(2,2);

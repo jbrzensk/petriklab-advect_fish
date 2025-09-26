@@ -1,6 +1,6 @@
 %%%%!! RUN SPINUP FOR ALL LOCATIONS
 % Add your specific subfunctions to the path
-addpath(genpath('coleen_functions'));
+addpath(genpath('colleen_functions'));
 
 %%%%%%%%%%%%%%% Initialize Model Variables
 %! Set fishing rate
@@ -94,7 +94,7 @@ MNT = 0;
 for YR = 1:1%YEARS % years
     ti = num2str(YR)
 
-    for DAY = 1:param.DT:5%DAYS % days
+    for DAY = 1:param.DT:31%DAYS % days
 
         %%%! Future time step
         DY = int64(ceil(DAY))
@@ -127,3 +127,6 @@ for YR = 1:1%YEARS % years
     end %Days
 
 end %Years
+%bioLd = sub_1Dto2D(GRD1,Lrg_d.bio,param);
+
+save('test_output_allsmooth.mat', 'bioLd','S_Lrg_d','S_Lrg_p','S_Med_d','S_Med_p','S_Med_f','S_Sml_d','S_Sml_p','S_Sml_f','S_Bent_bio','GRD1','param');

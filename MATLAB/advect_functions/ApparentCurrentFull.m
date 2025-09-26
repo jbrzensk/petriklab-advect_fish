@@ -33,15 +33,17 @@ function [ dir_swim_speed_full ] = ApparentCurrentFull( current, fish_speed, per
                  0, 1;  % Right
                  0, -1];% Left
 
-    [n, m, o] = size(current);
+    [n, m, o] = size(percent_more_food);
 
     dir_swim_speed_full = zeros(n,m,4);
 
     for i=1:n
         for j=1:m
    
-            U = current(i,j,1);
-            V = current(i,j,2);
+            Ul = current(i,j,1);
+            Vb = current(i,j,2);
+            Ur = current(i+1,j,1);
+            Vt = current(i,j+1,2);
             
             dir_swim_speed_single = zeros(4,1);
             
@@ -58,10 +60,10 @@ function [ dir_swim_speed_full ] = ApparentCurrentFull( current, fish_speed, per
             
             % Total speed, current PLUS swimming speed
             % dir_swim_speed = vel + fourWayFishSpeed;
-            dir_swim_speed_single = [ max( fourWayFishSpeed(1) + V, 0 ) ...
-                               max( fourWayFishSpeed(2) - V, 0 ) ...
-                               max( fourWayFishSpeed(3) + U, 0 ) ...
-                               max( fourWayFishSpeed(4) - U, 0 ) ];
+            dir_swim_speed_single = [ max( fourWayFishSpeed(1) + Vt, 0 ) ...
+                               max( fourWayFishSpeed(2) - Vb, 0 ) ...
+                               max( fourWayFishSpeed(3) + Ur, 0 ) ...
+                               max( fourWayFishSpeed(4) - Ul, 0 ) ];
 
             dir_swim_speed_full(i,j,:) = dir_swim_speed_single;
 
