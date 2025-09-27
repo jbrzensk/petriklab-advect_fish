@@ -1,6 +1,6 @@
 %%%% THE MODEL
 %%% DEMOGRAPHIC CALCULATIONS
-function [Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,ENVR] = sub_futbio_move_ingest(DY,ESM,GRD,Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,param,neighbor)
+function [Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,ENVR] = sub_futbio_move_prey(DY,ESM,GRD,Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,param,neighbor)
 
 dfrate = param.dfrate;
 
@@ -215,29 +215,37 @@ Lp.bio = sub_update_fi(Lp.bio,Lp.rec,Lp.nu,Lp.rep,Lp.gamma,Lp.die,Lp.nmort,Lp.fm
 Ld.bio = sub_update_fi(Ld.bio,Ld.rec,Ld.nu,Ld.rep,Ld.gamma,Ld.die,Ld.nmort,Ld.fmort);
 
 % Forward Euler checks for demographics 
-Sf.bio=sub_check_nan(Sf.bio);
-Sp.bio=sub_check_nan(Sp.bio);
-Sd.bio=sub_check_nan(Sd.bio);
-Mf.bio=sub_check_nan(Mf.bio);
-Mp.bio=sub_check_nan(Mp.bio);
-Md.bio=sub_check_nan(Md.bio);
-Lp.bio=sub_check_nan(Lp.bio);
-Ld.bio=sub_check_nan(Ld.bio);
+Sf.bio=sub_check(Sf.bio);
+Sp.bio=sub_check(Sp.bio);
+Sd.bio=sub_check(Sd.bio);
+Mf.bio=sub_check(Mf.bio);
+Mp.bio=sub_check(Mp.bio);
+Md.bio=sub_check(Md.bio);
+Lp.bio=sub_check(Lp.bio);
+Ld.bio=sub_check(Ld.bio);
 
 
 %%% MOVEMENT CALCULATIONS - advection and directed swimming
 %need to 1) calc prey of each fish; 2) put on 2D grid
-%prey - total consump (I) prob easiest to use here because factors in prefs
+%prey (factor in prefs?)
+Sf.prey = ENVR.Zm;
+Sp.prey = ENVR.Zm;
+Sd.prey = ENVR.Zm;
+Mf.prey = ENVR.Zm + ENVR.Zl + Sf.bio + Sp.bio + Sd.bio;
+Mp.prey = ENVR.Zm + ENVR.Zl + Sf.bio + Sp.bio + Sd.bio;
+Md.prey = BENT.mass;
+Lp.prey = Mf.bio + Mp.bio;
+Ld.prey = Mf.bio + Mp.bio + Md.bio + BENT.mass;
 
 % make 2D
-preySf = sub_1Dto2D(GRD,Sf.I,param);
-preySp = sub_1Dto2D(GRD,Sp.I,param);
-preySd = sub_1Dto2D(GRD,Sd.I,param);
-preyMf = sub_1Dto2D(GRD,Mf.I,param);
-preyMp = sub_1Dto2D(GRD,Mp.I,param);
-preyMd = sub_1Dto2D(GRD,Md.I,param);
-preyLp = sub_1Dto2D(GRD,Lp.I,param);
-preyLd = sub_1Dto2D(GRD,Ld.I,param);
+preySf = sub_1Dto2D(GRD,Sf.prey,param);
+preySp = sub_1Dto2D(GRD,Sp.prey,param);
+preySd = sub_1Dto2D(GRD,Sd.prey,param);
+preyMf = sub_1Dto2D(GRD,Mf.prey,param);
+preyMp = sub_1Dto2D(GRD,Mp.prey,param);
+preyMd = sub_1Dto2D(GRD,Md.prey,param);
+preyLp = sub_1Dto2D(GRD,Lp.prey,param);
+preyLd = sub_1Dto2D(GRD,Ld.prey,param);
 
 bioSf = sub_1Dto2D(GRD,Sf.bio,param);
 bioSp = sub_1Dto2D(GRD,Sp.bio,param);
@@ -248,37 +256,23 @@ bioMd = sub_1Dto2D(GRD,Md.bio,param);
 bioLp = sub_1Dto2D(GRD,Lp.bio,param);
 bioLd = sub_1Dto2D(GRD,Ld.bio,param);
 
-%Velocities are 1-D
-u100 = sub_1Dto2D(GRD,ENVR.U,param);
-v100 = sub_1Dto2D(GRD,ENVR.V,param);
-
-%Velocities are 2-D
-% u100 = ENVR.U;
-% v100 = ENVR.V;
+u200 = sub_1Dto2D(GRD,ENVR.U,param);
+v200 = sub_1Dto2D(GRD,ENVR.V,param);
 
 current = nan*ones(param.ni,param.nj,2);
-current(:,:,1) = u100; 
-current(:,:,2) = v100;
-btm_curr = 0.05 .* current;
+current(:,:,1) = u200; 
+current(:,:,2) = v200;
+btm_curr = 0.1 .* current;
 
-% Loop over advection for one day
-daysec = 24 * 60 * 60;
-nloop = int64(round(daysec / param.adt));
-
-%bioMf(1530)
-for n = 1:nloop
-    %n
-    % move
-    bioSf = AdvectPredator(bioSf,preySf,current,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
-    bioSp = AdvectPredator(bioSp,preySp,current,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
-    bioSd = AdvectPredator(bioSd,preySd,current,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
-    bioMf = AdvectPredator(bioMf,preyMf,current,param.adt,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
-    bioMp = AdvectPredator(bioMp,preyMp,current,param.adt,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
-    bioMd = AdvectPredator(bioMd,preyMd,btm_curr,param.adt,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
-    bioLp = AdvectPredator(bioLp,preyLp,current,param.adt,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
-    bioLd = AdvectPredator(bioLd,preyLd,btm_curr,param.adt,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
-end
-%bioMf(1530)
+% move
+bioSf = AdvectPredator(bioSf,preySf,current,param.DTsec,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
+bioSp = AdvectPredator(bioSp,preySp,current,param.DTsec,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
+bioSd = AdvectPredator(bioSd,preySd,current,param.DTsec,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
+bioMf = AdvectPredator(bioMf,preyMf,current,param.DTsec,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
+bioMp = AdvectPredator(bioMp,preyMp,current,param.DTsec,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
+bioMd = AdvectPredator(bioMd,preyMd,btm_curr,param.DTsec,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
+bioLp = AdvectPredator(bioLp,preyLp,current,param.DTsec,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
+bioLd = AdvectPredator(bioLd,preyLd,btm_curr,param.DTsec,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
 
 % put back on 1D grid
 Sf.bio = bioSf(GRD.ID);
@@ -291,14 +285,14 @@ Lp.bio = bioLp(GRD.ID);
 Ld.bio = bioLd(GRD.ID);
 
 
-% Forward Euler checks for movement (set zeros to small number)
-Sf.bio=sub_check_nan(Sf.bio);
-Sp.bio=sub_check_nan(Sp.bio);
-Sd.bio=sub_check_nan(Sd.bio);
-Mf.bio=sub_check_nan(Mf.bio);
-Mp.bio=sub_check_nan(Mp.bio);
-Md.bio=sub_check_nan(Md.bio);
-Lp.bio=sub_check_nan(Lp.bio);
-Ld.bio=sub_check_nan(Ld.bio);
+% Forward Euler checks for movement
+Sf.bio=sub_check(Sf.bio);
+Sp.bio=sub_check(Sp.bio);
+Sd.bio=sub_check(Sd.bio);
+Mf.bio=sub_check(Mf.bio);
+Mp.bio=sub_check(Mp.bio);
+Md.bio=sub_check(Md.bio);
+Lp.bio=sub_check(Lp.bio);
+Ld.bio=sub_check(Ld.bio);
 
 end

@@ -10,7 +10,7 @@ function con = sub_cons(param,Tp,Tb,tpel,wgt,enc)
     temp = (Tp.*tpel) + (Tb.*(1.0-tpel));
     
     %Cmax rate
-    cmax = (exp(param.kc * (temp-10.0)) .* param.h .* wgt^(-param.bcmx)) ./365.0;
+    cmax = (exp(param.kc * (temp-10.0)) .* param.h .* wgt^(-param.bcmx)) .*param.DTyear;
     
     ENC = sum(enc,2); % total biomass encountered
     con = cmax .* enc(:,1) ./ (cmax + ENC); % Type II

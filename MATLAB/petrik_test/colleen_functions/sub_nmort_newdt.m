@@ -17,12 +17,12 @@ function nmort = sub_nmort(param,Tp,Tb,tpel,wgt)
     if (MORT==2) % Hartvig Temperature-dependent mortality
         temp = (Tp.*tpel) + (Tb.*(1.0-tpel));
         % Hartvig
-        nmort = exp(0.063*(temp-10.0)) .* 0.84 .* wgt^(-0.25) /365.0;
+        nmort = exp(0.063*(temp-10.0)) .* 0.84 .* wgt^(-0.25) .*param.DTyear;
     end
     if (MORT==3) % mizer Temperature-dependent mortality
         temp = (Tp.*tpel) + (Tb.*(1.0-tpel));
         % mizer
-        nmort = exp(0.063*(temp-10.0)) .* 3.0 .* wgt^(-0.25) /365.0;
+        nmort = exp(0.063*(temp-10.0)) .* 3.0 .* wgt^(-0.25) .*param.DTyear;
     end
     if (MORT==4) % Jennings & Collingridge Temperature-dependent mortality
         temp = (Tp.*tpel) + (Tb.*(1.0-tpel));
@@ -32,7 +32,7 @@ function nmort = sub_nmort(param,Tp,Tb,tpel,wgt)
         E=0.6;
         k=8.62e-5;
         tfact = exp((-1*E/k)*((1./temp2)-(1./Tref)));
-        nmort = tfact .* 0.5 .* wgt^(-0.33) /365.0;
+        nmort = tfact .* 0.5 .* wgt^(-0.33) .*param.DTyear;
     end
     if (MORT==5) % Peterson & Wrob Temperature-dependent mortality
         temp = (Tp.*tpel) + (Tb.*(1.0-tpel));
@@ -44,6 +44,6 @@ function nmort = sub_nmort(param,Tp,Tb,tpel,wgt)
         nmort = exp(0.063*(temp-10.0)) .* Nat_mrt;
     end
     if (MORT==7) % wgt-dep but constant by temp
-        nmort = 0.5 .* wgt^(-0.25) /365.0;
+        nmort = 0.5 .* wgt^(-0.25) .*param.DTyear;
     end
 end

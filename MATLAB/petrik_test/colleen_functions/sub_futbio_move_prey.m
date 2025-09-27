@@ -215,14 +215,14 @@ Lp.bio = sub_update_fi(Lp.bio,Lp.rec,Lp.nu,Lp.rep,Lp.gamma,Lp.die,Lp.nmort,Lp.fm
 Ld.bio = sub_update_fi(Ld.bio,Ld.rec,Ld.nu,Ld.rep,Ld.gamma,Ld.die,Ld.nmort,Ld.fmort);
 
 % Forward Euler checks for demographics 
-Sf.bio=sub_check(Sf.bio);
-Sp.bio=sub_check(Sp.bio);
-Sd.bio=sub_check(Sd.bio);
-Mf.bio=sub_check(Mf.bio);
-Mp.bio=sub_check(Mp.bio);
-Md.bio=sub_check(Md.bio);
-Lp.bio=sub_check(Lp.bio);
-Ld.bio=sub_check(Ld.bio);
+Sf.bio=sub_check_nan(Sf.bio);
+Sp.bio=sub_check_nan(Sp.bio);
+Sd.bio=sub_check_nan(Sd.bio);
+Mf.bio=sub_check_nan(Mf.bio);
+Mp.bio=sub_check_nan(Mp.bio);
+Md.bio=sub_check_nan(Md.bio);
+Lp.bio=sub_check_nan(Lp.bio);
+Ld.bio=sub_check_nan(Ld.bio);
 
 
 %%% MOVEMENT CALCULATIONS - advection and directed swimming
@@ -256,23 +256,37 @@ bioMd = sub_1Dto2D(GRD,Md.bio,param);
 bioLp = sub_1Dto2D(GRD,Lp.bio,param);
 bioLd = sub_1Dto2D(GRD,Ld.bio,param);
 
-u200 = sub_1Dto2D(GRD,ENVR.U,param);
-v200 = sub_1Dto2D(GRD,ENVR.V,param);
+%Velocities are 1-D
+u100 = sub_1Dto2D(GRD,ENVR.U,param);
+v100 = sub_1Dto2D(GRD,ENVR.V,param);
+
+%Velocities are 2-D
+% u100 = ENVR.U;
+% v100 = ENVR.V;
 
 current = nan*ones(param.ni,param.nj,2);
-current(:,:,1) = u200; 
-current(:,:,2) = v200;
-btm_curr = 0.1 .* current;
+current(:,:,1) = u100; 
+current(:,:,2) = v100;
+btm_curr = 0.05 .* current;
 
-% move
-bioSf = AdvectPredator(bioSf,preySf,current,param.DTsec,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
-bioSp = AdvectPredator(bioSp,preySp,current,param.DTsec,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
-bioSd = AdvectPredator(bioSd,preySd,current,param.DTsec,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
-bioMf = AdvectPredator(bioMf,preyMf,current,param.DTsec,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
-bioMp = AdvectPredator(bioMp,preyMp,current,param.DTsec,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
-bioMd = AdvectPredator(bioMd,preyMd,btm_curr,param.DTsec,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
-bioLp = AdvectPredator(bioLp,preyLp,current,param.DTsec,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
-bioLd = AdvectPredator(bioLd,preyLd,btm_curr,param.DTsec,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
+% Loop over advection for one day
+daysec = 24 * 60 * 60;
+nloop = int64(round(daysec / param.adt));
+
+%bioMf(1530)
+for n = 1:nloop
+    %n
+    % move
+    bioSf = AdvectPredator(bioSf,preySf,current,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
+    bioSp = AdvectPredator(bioSp,preySp,current,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
+    bioSd = AdvectPredator(bioSd,preySd,current,param.adt,param.dx,param.dy,neighbor,param.U_s,param.mask,param.area,param.nj,param.ni);
+    bioMf = AdvectPredator(bioMf,preyMf,current,param.adt,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
+    bioMp = AdvectPredator(bioMp,preyMp,current,param.adt,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
+    bioMd = AdvectPredator(bioMd,preyMd,btm_curr,param.adt,param.dx,param.dy,neighbor,param.U_m,param.mask,param.area,param.nj,param.ni);
+    bioLp = AdvectPredator(bioLp,preyLp,current,param.adt,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
+    bioLd = AdvectPredator(bioLd,preyLd,btm_curr,param.adt,param.dx,param.dy,neighbor,param.U_l,param.mask,param.area,param.nj,param.ni);
+end
+%bioMf(1530)
 
 % put back on 1D grid
 Sf.bio = bioSf(GRD.ID);
@@ -285,14 +299,14 @@ Lp.bio = bioLp(GRD.ID);
 Ld.bio = bioLd(GRD.ID);
 
 
-% Forward Euler checks for movement
-Sf.bio=sub_check(Sf.bio);
-Sp.bio=sub_check(Sp.bio);
-Sd.bio=sub_check(Sd.bio);
-Mf.bio=sub_check(Mf.bio);
-Mp.bio=sub_check(Mp.bio);
-Md.bio=sub_check(Md.bio);
-Lp.bio=sub_check(Lp.bio);
-Ld.bio=sub_check(Ld.bio);
+% Forward Euler checks for movement (set zeros to small number)
+Sf.bio=sub_check_nan(Sf.bio);
+Sp.bio=sub_check_nan(Sp.bio);
+Sd.bio=sub_check_nan(Sd.bio);
+Mf.bio=sub_check_nan(Mf.bio);
+Mp.bio=sub_check_nan(Mp.bio);
+Md.bio=sub_check_nan(Md.bio);
+Lp.bio=sub_check_nan(Lp.bio);
+Ld.bio=sub_check_nan(Ld.bio);
 
 end
