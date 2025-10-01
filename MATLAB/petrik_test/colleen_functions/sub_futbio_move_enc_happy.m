@@ -1,6 +1,6 @@
 %%%% THE MODEL
 %%% DEMOGRAPHIC CALCULATIONS
-function [Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,ENVR] = sub_futbio_move_enc(DY,ESM,GRD,Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,param,neighbor)
+function [Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,ENVR] = sub_futbio_move_enc_happy(DY,ESM,GRD,Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,param,neighbor)
 
 dfrate = param.dfrate;
 
@@ -239,6 +239,16 @@ Md.E = Md.enc_be;
 Lp.E = Lp.enc_f + Lp.enc_p + Lp.enc_d;
 Ld.E = Ld.enc_f + Ld.enc_p + Ld.enc_d + Ld.enc_be;
 
+% Happiness index (nu = avail energy > 0; 1=happy, 0=not happy)
+happySf = sub_1Dto2D(GRD,Sf.nu,param);
+happySp = sub_1Dto2D(GRD,Sp.nu,param);
+happySd = sub_1Dto2D(GRD,Sd.nu,param);
+happyMf = sub_1Dto2D(GRD,Mf.nu,param);
+happyMp = sub_1Dto2D(GRD,Mp.nu,param);
+happyMd = sub_1Dto2D(GRD,Md.nu,param);
+happyLp = sub_1Dto2D(GRD,Lp.nu,param);
+happyLd = sub_1Dto2D(GRD,Ld.nu,param);
+
 % make 2D
 preySf = sub_1Dto2D(GRD,Sf.E,param);
 preySp = sub_1Dto2D(GRD,Sp.E,param);
@@ -280,6 +290,7 @@ speciesBio = {bioSf, bioSp, bioSd, bioMf, bioMp, bioMd, bioLp, bioLd};
 speciesPrey = {preySf, preySp, preySd, preyMf, preyMp, preyMd, preyLp, preyLd};
 speciesU    = {param.U_s, param.U_s, param.U_s, param.U_m, param.U_m, param.U_m, param.U_l, param.U_l};
 speciesCurr = {current, current, current, current, current, btm_curr, current, btm_curr};
+speciesHappy = {happySf, happySp, happySd, happyMf, happyMp, happyMd, happyLp, happyLd};
 
 for n = 1:nloop
     % Parfor loop to run concurrently
