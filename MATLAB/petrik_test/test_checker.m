@@ -9,7 +9,7 @@ bioLd_smooth = sub_1Dto2D(GRD1,S_Lrg_d(:,31), param);
 figure(2); pcolor(bioLd_smooth'); shading interp; title('Ld');colorbar; clim([0 4])
 hold on; plot(60, 75,'ro');
 
-load('test_output_allsmooth.mat');
+load('test_output_allsmooth_2x2.mat');
 bioLd = sub_1Dto2D(GRD1,S_Lrg_d(:,31), param);
 
 figure(21); pcolor(bioLd'); shading interp; title('Ld no smooth');colorbar;clim([0 4]);
@@ -29,7 +29,7 @@ F_hat_corrected = F_hat ./ (M_hat + eps );
 
 F_hat_shifted = fftshift(F_hat_corrected);
 
-figure
+figure(3)
 imagesc(log(abs(F_hat_shifted) + 1))   % +1 avoids log(0)
 colormap jet
 colorbar
@@ -40,7 +40,7 @@ title('2D Fourier Amplitude Spectrum')
 kx = (-floor(Nx/2):ceil(Nx/2)-1) / Nx;  % normalized frequency
 ky = (-floor(Ny/2):ceil(Ny/2)-1) / Ny;
 
-figure
+figure(4)
 imagesc(kx, ky, log(abs(F_hat_shifted) + 1))
 axis xy
 xlabel('k_x (cycles per grid cell)')
@@ -67,7 +67,7 @@ end
 
 % Plot radial spectrum
 k_centers = (edges(1:end-1) + edges(2:end))/2;
-figure
+figure(5)
 loglog(k_centers, Pradial)
 xlabel('Wavenumber |k|')
 ylabel('Power')
@@ -89,12 +89,12 @@ kernel = [ 1 -2  1;
            1 -2  1 ];   % Laplacian-like with alternating sign sensitivity
 
 convF = conv2(Ffill, kernel, 'same');
-figure;
+figure(6);
 subplot(1,2,1); imagesc(F); colorbar; title('Original field F');
 subplot(1,2,2); imagesc(convF); colorbar; title('Checkerboard kernel response (convF)');
 colormap('parula');
 
-figure; histogram(convF(:) ./ nanstd(Ffill(:))); title('Histogram of convF normalized by std(F)');
+figure(7); histogram(convF(:) ./ nanstd(Ffill(:))); title('Histogram of convF normalized by std(F)');
 xlabel('convF / std(F)');
 
 [ny,nx] = size(F);

@@ -1,4 +1,9 @@
 function idx = checkerboard_index(F)
+% Correlation value for the normalized grid to that of a checkerboard
+% 1  : perfect correlation ( checkerboard )
+% 0  : no corelation
+% -1 : inverse perfect checkerboard
+
 % F: 2D array (may contain NaN)
 [ny, nx] = size(F);
 

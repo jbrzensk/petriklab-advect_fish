@@ -9,10 +9,10 @@ kernel = [ 1 -2  1;
           -2  4 -2;
            1 -2  1 ];
 
-% Convolution
+% Convolution of F w/o nans and kernel
 convF = conv2(Ffill, kernel, 'same');
 
 % Normalize by local variance, or anything really
-score = sqrt(nanmean(convF(:).^2)) / (nanstd(Ffill(:)) + eps);
+score = sqrt(mean(convF(:).^2)) / (std(Ffill(:)) + eps);
 
 end

@@ -296,7 +296,6 @@ V_face(2:ny,:) = 0.5 * (v100t(1:ny-1,:) + v100t(2:ny,:));
 % Boundary faces: replicate
 V_face(1,:) = v100t(1,:);     % southern boundary
 V_face(ny+1,:) = v100t(ny,:); % northern boundary% Loop over advection for one day
-
 V_face(2:ny,:) = V_face(2:ny,:) .* (maskt(1:ny-1,:) & maskt(2:ny,:));
 
 
@@ -334,7 +333,7 @@ for n = 1:nloop
             param.adt, param.dx, param.dy, neighbor, ...
             speciesU{k}, param.mask, param.area, param.nj, param.ni);
         % Smooth 
-        speciesBio{k} = smooth2nan(speciesBio{k},3);
+        speciesBio{k} = smooth2nan(speciesBio{k},2);
     end
 end
  % for n = 1:6%nloop
