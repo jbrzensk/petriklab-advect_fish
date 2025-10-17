@@ -99,7 +99,7 @@ for YR = 1:1%YEARS % years
         %%%! Future time step
         DY = int64(ceil(DAY))
         [Sml_f,Sml_p,Sml_d,Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT,ENVR] = ...
-            sub_futbio_move_prey(DY,COBALT,GRD1,Sml_f,Sml_p,Sml_d,...
+            sub_futbio_move_enc_happy(DY,COBALT,GRD1,Sml_f,Sml_p,Sml_d,...
             Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT,param,neighborhood);
 
         %! Store
@@ -113,20 +113,20 @@ for YR = 1:1%YEARS % years
         S_Med_d(:,DY) = Med_d.bio;
         S_Lrg_p(:,DY) = Lrg_p.bio;
         S_Lrg_d(:,DY) = Lrg_d.bio;
+        % 
+        Large_d = sub_1Dto2D(GRD1,Lrg_d.bio,param);
+        alt_Large_d = smooth2nan(Large_d, 3);
 
-        % Large_d = sub_1Dto2D(GRD1,Lrg_d.bio,param);
-        % alt_Large_d = smooth2nan(Large_d, 3);
-
-        % tiledlayout(2,1)
-        % nexttile
-        % pcolor(Large_d'); shading interp; title('Ld');colorbar;clim([0 50]);
-        % nexttile
-        % pcolor(alt_Large_d'); shading interp; title('Smooth Ld');colorbar;clim([0 50]);
-        % drawnow
+        tiledlayout(2,1)
+        nexttile
+        pcolor(Large_d'); shading interp; title('Ld');colorbar;clim([0 50]);
+        nexttile
+        pcolor(alt_Large_d'); shading interp; title('Smooth Ld');colorbar;clim([0 50]);
+        drawnow
 
     end %Days
 
 end %Years
 %bioLd = sub_1Dto2D(GRD1,Lrg_d.bio,param);
 
-save('test_output_allsmooth_2x2.mat', 'bioLd','S_Lrg_d','S_Lrg_p','S_Med_d','S_Med_p','S_Med_f','S_Sml_d','S_Sml_p','S_Sml_f','S_Bent_bio','GRD1','param');
+save('test_output_happy_3.mat','S_Lrg_d','S_Lrg_p','S_Med_d','S_Med_p','S_Med_f','S_Sml_d','S_Sml_p','S_Sml_f','S_Bent_bio','GRD1','param');
