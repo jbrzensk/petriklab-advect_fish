@@ -1,11 +1,13 @@
 %% Output visualization
 close all; clear all; clc;
 
-filename = 'test_output_happy_3.mat';
+picfilename = 'K_30days.png';
+
+filename = 'test_output_K.mat';
 
 load(filename);
 
-title_str = 'Happy movement, day 30';
+title_str = 'K movement, day 30';
 
 day = 30;
 
@@ -31,3 +33,4 @@ preyLd = sub_1Dto2D(GRD1,Ld,param);
 fignum = 2;
 
 plotNineFish( fignum, title_str, Sf, Sp, Sd, Mf, Mp, Md, Lp, Ld, GRD1, param)
+%print(gcf, picfilename, '-dpng', '-r400');

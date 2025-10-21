@@ -2,8 +2,12 @@
 
 close all; clear all; clc;
 
-load('all_neighbors_2.mat');
+load('new_neighb_50x100.mat');
+%load('index_neighborhood_100x50.mat')
+%load('all_neighbors_2.mat');
 %load('neighbors_360x200.mat');
+%all_neighbors = neighborhood;
+all_neighbors = new_neighborhood;
 
 [m, n, ~] = size(all_neighbors.west);
 
@@ -20,4 +24,4 @@ for ii=1:m
     end
 end
 
-save('all_neighbors_2_360x200.mat', 'neighborhood');
+save('index_neighborhood_100x50_2.mat', 'neighborhood');
