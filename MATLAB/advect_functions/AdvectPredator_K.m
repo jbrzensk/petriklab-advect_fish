@@ -11,10 +11,14 @@ function[ Predator ] = AdvectPredator_K( Predator,...
                                         area, ...
                                         m, ...
                                         n)
-%% AdvectPredator.m
+%% AdvectPredator_K.m
 % -------------------------------------------------------------------------
 % Simulates fish advection and feeding in a 2D field using a 
-% semi-Lagrangian approach.
+% semi-Lagrangian approach, and moves fish towards more food, unless the 
+% cell is crowded (over carrying capacity K), then it does not move there.
+% The function also checks to see if the current cell is crowded, then it
+% tries to move out until the population is below carrying capacity K.
+% The additional function called here is OvercrowdedFishFiveWay_K.
 %
 % This function updates the fish biomass field (`Fish`) based on currents,
 % fish swimming behavior, and food consumption. It uses semi-Lagrangian 
@@ -56,7 +60,7 @@ function[ Predator ] = AdvectPredator_K( Predator,...
     % Calculate the percent change between cells
     percent_more_food_full = percentMoreFoodFourWay( Prey, neighbors_all );
     
-    % Calculate overcrowded conditions four way
+    % Calculate overcrowded conditions five way
     [ overcrowded_fish_full ] = OvercrowdedFishFiveWay_K( Predator, neighbors_all, K );
 
     % Calculate the apparent current, taking swim speed and current

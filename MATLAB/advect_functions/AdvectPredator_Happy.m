@@ -78,7 +78,7 @@ function[ Predator ] = AdvectPredator_Happy( Predator,...
                %neighbors = squeeze(neighbors_all(i,j,:,:));
                neighbors = reshape(neighbors_all(i,j,:,:), [4, 2]);
 
-               if fish_speed <= 0
+               if fish_speed == 0.0
                    apparent_current_single = reshape(apparent_current_full(i,j,:), [4, 1]);
                    Flux = passiveSemiLagrangianFish( Predator, ...
                                                      Flux, ...
@@ -109,7 +109,7 @@ function[ Predator ] = AdvectPredator_Happy( Predator,...
     end
     %
     Predator = Predator + (Flux ./ area );
-    %Check that we kept the same number of fish
+    % %Check that we kept the same number of fish
     Diff = sum( Fish_OG(:) - Predator(:), 'omitnan');
     if ( Diff > 0.0 || Diff < 0.0 )
         fprintf('Diff > 0, %5.8f, adjusting...', Diff);

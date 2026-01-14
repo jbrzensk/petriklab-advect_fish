@@ -1,5 +1,5 @@
 function [] = plotNineFish( fignum, title_str, Sfi, Spi, Sdi, Mfi, Mpi, Mdi, Lpi, Ldi, GRD, param)
-figure(fignum);
+figure( 'Units','normalized','OuterPosition',[0 0 1 1]);
 preySf = sub_1Dto2D(GRD,Sfi,param);
 preySp = sub_1Dto2D(GRD,Spi,param);
 preySd = sub_1Dto2D(GRD,Sdi,param);
@@ -10,11 +10,11 @@ preyLp = sub_1Dto2D(GRD,Lpi,param);
 preyLd = sub_1Dto2D(GRD,Ldi,param);
 fignum=tiledlayout(3,3);
 title(fignum,title_str);
-nexttile; pcolor(preySf'); shading interp; title('Sf');colorbar;
-nexttile; pcolor(preySp'); shading interp; title('Sp');colorbar;
-nexttile; pcolor(preySd'); shading interp; title('Sd');colorbar;
-nexttile; pcolor(preyMf'); shading interp; title('Mf');colorbar;
-nexttile; pcolor(preyMp'); shading interp; title('Mp');colorbar;
-nexttile; pcolor(preyMd'); shading interp; title('Md');colorbar;
-nexttile; pcolor(preyLp'); shading interp; title('Lp');colorbar;clim([0 50]);
-nexttile; pcolor(preyLd'); shading interp; title('Ld');colorbar;clim([0 50]);
+nexttile; pcolor(preySf'); shading interp; title('Sf');colorbar;clim([0 0.5]);
+nexttile; pcolor(preySp'); shading interp; title('Sp');colorbar;clim([0 0.1]);
+nexttile; pcolor(preySd'); shading interp; title('Sd');colorbar;clim([0 0.25]);
+nexttile; pcolor(preyMf'); shading interp; title('Mf');colorbar;clim([0 30]);
+nexttile; pcolor(preyMp'); shading interp; title('Mp');colorbar;clim([0 1.2]);
+nexttile; pcolor(preyMd'); shading interp; title('Md');colorbar;clim([0 3]);
+nexttile; pcolor(preyLp'); shading interp; title('Lp');colorbar;clim([0 40]);
+nexttile; pcolor(preyLd'); shading interp; title('Ld');colorbar;clim([0 40]);

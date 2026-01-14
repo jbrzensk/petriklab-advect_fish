@@ -24,7 +24,7 @@ function [ dir_swim_speed_full ] = ApparentCurrentFull_happy( current, happiness
 %         gradient for the swimming speed. We can adjust that here.
 %
 % AUTHOR: JARED BRZENSKI
-% DATE  : 30-06-2025
+% DATE  : 30-12-2025
 % -------------------------------------------------------------------------
 %% Core Apparent Current Full Code
     % Directions matrix

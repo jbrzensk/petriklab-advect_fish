@@ -1,6 +1,10 @@
 %%%% THE MODEL
+% uses "Happy" with added diffusion
+% Happy takes into acount swimming against current, 
+% which seems to be a standard behavior.
+%
 %%% DEMOGRAPHIC CALCULATIONS
-function [Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,ENVR] = sub_futbio_move_enc_K(DY,ESM,GRD,Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,param,neighbor)
+function [Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,ENVR] = sub_futbio_move_enc_D(DY,ESM,GRD,Sf,Sp,Sd,Mf,Mp,Md,Lp,Ld,BENT,param,neighbor)
     
     if nargin ~= 14
         warning('sub_futbio_move_enc_happy:InvalidNumInputs', ...
@@ -295,20 +299,27 @@ speciesBio = {bioSf, bioSp, bioSd, bioMf, bioMp, bioMd, bioLp, bioLd};
 speciesPrey = {preySf, preySp, preySd, preyMf, preyMp, preyMd, preyLp, preyLd};
 speciesU    = {param.U_s, param.U_s, param.U_s, param.U_m, param.U_m, param.U_m, param.U_l, param.U_l};
 speciesCurr = {current, current, current, current, current, btm_curr, current, btm_curr};
-%speciesHappy = {happySf, happySp, happySd, happyMf, happyMp, happyMd, happyLp, happyLd};
+% Specific to new test cases
+speciesHappy = {happySf, happySp, happySd, happyMf, happyMp, happyMd, happyLp, happyLd};
 speciesK = {10,10,10,50,50,100,200,200};
+% Diffusion coefficients from Colleen
+%speciesD = {0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4, 0.4};
 %speciesD = {0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2, 0.2};
+speciesD = {0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1};
+speciesD = {600, 600, 600, 600, 600, 600, 600, 600};
+
 for n = 1:nloop
     % Parfor loop to run concurrently
     parfor k = 1:8
         % All eight are run at the same time
-        speciesBio{k} = AdvectPredator_K( ...
-            speciesBio{k}, speciesPrey{k}, speciesCurr{k}, speciesK{k}, ...
+        speciesBio{k} = AdvectPredator_Happy( ...
+            speciesBio{k}, speciesPrey{k}, speciesCurr{k}, speciesHappy{k}, ...
             param.adt, param.dx, param.dy, neighbor, ...
             speciesU{k}, param.mask, param.area, param.nj, param.ni);
         % Smooth if you want?
         %speciesBio{k} = smooth2nan(speciesBio{k},3);
-        %speciesBio{k} = diffuse2D_nans_cons(speciesBio{k},speciesD{k});
+        % speciesBio{k} = diffuse2D_nans_cons(speciesBio{k},speciesD{k});
+        speciesBio{k} = masked_laplacian( speciesBio{k}, speciesD{k}, param.dx, param.dy);
     end
 end
 

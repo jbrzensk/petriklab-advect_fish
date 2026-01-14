@@ -24,7 +24,7 @@ function [ dir_swim_speed_full ] = ApparentCurrentFull_K( current, overcrowded, 
 %         gradient for the swimming speed. We can adjust that here.
 %
 % AUTHOR: JARED BRZENSKI
-% DATE  : 30-06-2025
+% DATE  : 30-10-2025
 % -------------------------------------------------------------------------
 %% Core Apparent Current Full Code
     % Directions matrix
@@ -40,12 +40,15 @@ function [ dir_swim_speed_full ] = ApparentCurrentFull_K( current, overcrowded, 
 
     for i=1:n
         for j=1:m
-   
+
             % Check if in the ocean, Nan == not in ocean!
             if ( isnan( current(i,j,1) )) 
                 dir_swim_speed_full(i,j,:) = [ 0 0 0 0 ];
                 continue
             end
+            
+            have_to_swim = [0 0 0 0];
+            crowded = 0;
 
             Ul = current(i,j,1);
             Vb = current(i,j,2);
@@ -72,8 +75,6 @@ function [ dir_swim_speed_full ] = ApparentCurrentFull_K( current, overcrowded, 
             
             % Is the fish crowded where they are?
             crowded = overcrowded_dir(5);
-
-
 
             % Fish swim logic for overcrowded
             unit_vector = [ 0 0 0 0 ];

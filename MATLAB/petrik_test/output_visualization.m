@@ -1,13 +1,17 @@
 %% Output visualization
 close all; clear all; clc;
 
-picfilename = 'K_30days.png';
+% Set file to read in
+filename = 'test_output_D_happy_D_0.1_maskLap_600k.mat';
 
-filename = 'test_output_K.mat';
+% output image will have same name as input file
+[~, name, ~] = fileparts(filename);
+picfilename = [name '.png'];
+
 
 load(filename);
 
-title_str = 'K movement, day 30';
+title_str = 'Diffusion 0.1 test, Happy, day 30';
 
 day = 30;
 
@@ -33,4 +37,4 @@ preyLd = sub_1Dto2D(GRD1,Ld,param);
 fignum = 2;
 
 plotNineFish( fignum, title_str, Sf, Sp, Sd, Mf, Mp, Md, Lp, Ld, GRD1, param)
-%print(gcf, picfilename, '-dpng', '-r400');
+print(gcf, picfilename, '-dpng', '-r400');

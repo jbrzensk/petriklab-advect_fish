@@ -1,6 +1,11 @@
 %%%%!! RUN SPINUP FOR ALL LOCATIONS
+% Diffusion test case.
+%
 % Add your specific subfunctions to the path
 close all; clear all; clc;
+
+outfilename='test_output_D_happy_D_0.1_maskLap_600k.mat';
+
 
 addpath(genpath('colleen_functions'));
 
@@ -101,7 +106,7 @@ for YR = 1:1%YEARS % years
         %%%! Future time step
         DY = int64(ceil(DAY))
         [Sml_f,Sml_p,Sml_d,Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT,ENVR] = ...
-            sub_futbio_move_enc_K(DY,COBALT,GRD1,Sml_f,Sml_p,Sml_d,...
+            sub_futbio_move_enc_D(DY,COBALT,GRD1,Sml_f,Sml_p,Sml_d,...
             Med_f,Med_p,Med_d,Lrg_p,Lrg_d,BENT,param,neighborhood);
 
         %! Store
@@ -116,19 +121,20 @@ for YR = 1:1%YEARS % years
         S_Lrg_p(:,DY) = Lrg_p.bio;
         S_Lrg_d(:,DY) = Lrg_d.bio;
         % 
-        Large_d = sub_1Dto2D(GRD1,Lrg_d.bio,param);
-        alt_Large_d = smooth2nan(Large_d, 3);
-
-        tiledlayout(2,1)
-        nexttile
-        pcolor(Large_d'); shading interp; title('Ld');colorbar;clim([0 50]);
-        nexttile
-        pcolor(alt_Large_d'); shading interp; title('Smooth Ld');colorbar;clim([0 50]);
-        drawnow
+        % Large_d = sub_1Dto2D(GRD1,Lrg_d.bio,param);
+        % %alt_Large_d = smooth2nan(Large_d, 3);
+        % alt_Large_d = diffuse2D_nans_cons(Large_d);
+        % 
+        % tiledlayout(2,1)
+        % nexttile
+        % pcolor(Large_d'); shading interp; title('Ld');colorbar;clim([0 50]);
+        % nexttile
+        % pcolor(alt_Large_d'); shading interp; title('Smooth 0.1 Ld');colorbar;clim([0 50]);
+        % drawnow
 
     end %Days
 
 end %Years
 %bioLd = sub_1Dto2D(GRD1,Lrg_d.bio,param);
 
-save('test_output_K_diffusion_9point3.mat','S_Lrg_d','S_Lrg_p','S_Med_d','S_Med_p','S_Med_f','S_Sml_d','S_Sml_p','S_Sml_f','S_Bent_bio','GRD1','param');
+save(outfilename,'S_Lrg_d','S_Lrg_p','S_Med_d','S_Med_p','S_Med_f','S_Sml_d','S_Sml_p','S_Sml_f','S_Bent_bio','GRD1','param');
